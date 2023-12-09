@@ -4,8 +4,7 @@ import static com.zappers.eye.music.utils.MusicManager.getNoteType;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.CompletableFuture;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -15,8 +14,9 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 public class Sound {
 
     private final Clip sound;
-    private Timer timer;
+    private CompletableFuture future;
     private boolean stick = false;
+    private final double frameLength;
 
     /**
      * Gets the file, then tries to play the sound.
@@ -35,41 +35,40 @@ public class Sound {
         } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
             throw new UnsupportedOperationException("Unable to load file " + ex.getMessage());
         }
+        frameLength = this.sound.getFrameLength() / (double) this.sound.getMicrosecondLength();
     }
 
-    public void play() {
+    /**
+     *
+     * @param time
+     */
+    public void play(int time) {
         if (this.sound.isRunning()) {
             this.sound.stop();
+            sound.flush();
         }
+
         this.sound.setFramePosition(0);
-        this.sound.start();
+        this.sound.setLoopPoints(0, (int) Math.floor(time * 1000 * frameLength));
+        this.sound.loop(Clip.LOOP_CONTINUOUSLY);
     }
 
-    public void playRepeating(int time, boolean stick) {
-        this.stick = stick;
-        if (timer != null) {
-            timer.cancel();
+    public void playRepeating(int time, boolean setStick) {
+        this.stick = setStick;
+        if (future != null) {
+            future.cancel(true);
         }
-        this.timer = new Timer();
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                play();
-            }
-        };
-
-        timer.scheduleAtFixedRate(task, 0, time);
+        future = CompletableFuture.runAsync(() -> {
+            play(time);
+        });
     }
 
     public void stop() {
-        this.stick = false;
         if (this.sound.isRunning()) {
             this.sound.stop();
+            sound.flush();
         }
-        if (timer != null) {
-            timer.cancel();
-        }
-        this.timer = null;
+        future.cancel(true);
     }
 
     public boolean isStuck() {

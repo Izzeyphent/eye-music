@@ -73,7 +73,7 @@ public final class ImageUtils {
             case 3:
                 return "PINK";
             case 4:
-                return "PURLE";
+                return "PURPLE";
             case 5:
                 return "BLUE";
             case 6:

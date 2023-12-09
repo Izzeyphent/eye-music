@@ -2,9 +2,10 @@ package com.zappers.eye.music.utils;
 
 import com.zappers.eye.music.sound.Sound;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
 
 public class MusicManager {
 
@@ -96,41 +97,47 @@ public class MusicManager {
     }
 
     public static Map<String, Sound> loadSounds() {
-        return Map.of(
-                //                "piano-a-whole", new Sound("piano", "a", 1),
-                //                "piano-a-half", new Sound("piano", "a", 2),
-                //                "piano-a-quarter", new Sound("piano", "a", 3),
-                //                "piano-a-eighth", new Sound("piano", "a", 4),
-                //                "piano-b-whole", new Sound("piano", "b", 1),
-                //                "piano-b-half", new Sound("piano", "b", 2),
-                //                "piano-b-quarter", new Sound("piano", "b", 3),
-                //                "piano-b-eighth", new Sound("piano", "b", 4),
-                //                
-                //                "piano-c-whole", new Sound("piano", "c", 1),
-                //                "piano-c-half", new Sound("piano", "c", 2),
-                //                "piano-c-quarter", new Sound("piano", "c", 3),
-                //                "piano-c-eighth", new Sound("piano", "c", 4),
+        Map<String, Sound> sounds = new HashMap<>();
 
-                "piano-D-whole", new Sound("piano", "d", 1),
-                //                "piano-d-half", new Sound("piano", "d", 2),
-                //                "piano-d-quarter", new Sound("piano", "d", 3),
-                //                "piano-d-eighth", new Sound("piano", "d", 4),
+        // a
+        sounds.put("piano-A-whole", new Sound("piano", "a", 1));
+        sounds.put("piano-A-half", new Sound("piano", "a", 2));
+        sounds.put("piano-A-quarter", new Sound("piano", "a", 3));
+        sounds.put("piano-A-eighth", new Sound("piano", "a", 4));
+        // b
+        sounds.put("piano-B-whole", new Sound("piano", "b", 1));
+        sounds.put("piano-B-half", new Sound("piano", "b", 2));
+        sounds.put("piano-B-quarter", new Sound("piano", "b", 3));
+        sounds.put("piano-B-eighth", new Sound("piano", "b", 4));
+        // c
+        sounds.put("piano-C-whole", new Sound("piano", "c", 1));
+        sounds.put("piano-C-half", new Sound("piano", "c", 2));
+        sounds.put("piano-C-quarter", new Sound("piano", "c", 3));
+        sounds.put("piano-C-eighth", new Sound("piano", "c", 4));
 
-                "piano-E-whole", new Sound("piano", "e", 1),
-                //                "piano-e-half", new Sound("piano", "e", 2),
-                //                "piano-e-quarter", new Sound("piano", "e", 3),
-                //                "piano-e-eighth", new Sound("piano", "e", 4),
+        // d
+        sounds.put("piano-D-whole", new Sound("piano", "d", 1));
+        sounds.put("piano-D-half", new Sound("piano", "d", 2));
+        sounds.put("piano-D-quarter", new Sound("piano", "d", 3));
+        sounds.put("piano-D-eighth", new Sound("piano", "d", 4));
 
-                "piano-F-whole", new Sound("piano", "f", 1),
-                //                "piano-f-half", new Sound("piano", "f", 2),
-                //                "piano-f-quarter", new Sound("piano", "f", 3),
-                //                "piano-f-eighth", new Sound("piano", "f", 4),
+        // e
+        sounds.put("piano-E-whole", new Sound("piano", "e", 1));
+        sounds.put("piano-E-half", new Sound("piano", "e", 2));
+        sounds.put("piano-E-quarter", new Sound("piano", "e", 3));
+        sounds.put("piano-E-eighth", new Sound("piano", "e", 4));
 
-                "piano-G-whole", new Sound("piano", "g", 1)
-        //                "piano-g-half", new Sound("piano", "g", 2),
-        //                "piano-g-quarter", new Sound("piano", "g", 3),
-        //                "piano-g-eighth", new Sound("piano", "g", 4)                
-        );
+        // f
+        sounds.put("piano-F-whole", new Sound("piano", "f", 1));
+        sounds.put("piano-F-half", new Sound("piano", "f", 2));
+        sounds.put("piano-F-quarter", new Sound("piano", "f", 3));
+        sounds.put("piano-F-eighth", new Sound("piano", "f", 4));
+
+        sounds.put("piano-G-whole", new Sound("piano", "g", 1));
+        sounds.put("piano-G-half", new Sound("piano", "g", 2));
+        sounds.put("piano-G-quarter", new Sound("piano", "g", 3));
+        sounds.put("piano-G-eighth", new Sound("piano", "g", 4));
+        return Collections.unmodifiableMap(sounds);
     }
 
     public void stopNonStuck() {
