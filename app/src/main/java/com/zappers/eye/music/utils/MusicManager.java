@@ -1,52 +1,86 @@
 package com.zappers.eye.music.utils;
 
 import com.zappers.eye.music.sound.Sound;
-import static com.zappers.eye.music.utils.ImageUtils.COLOR_TO_NOTE;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 
 public class MusicManager {
-    
+
     private static final Map<String, Sound> SOUNDS = loadSounds();
+    private final List<Sound> playingSounds = new ArrayList<>();
     private final int rate;
-    private final Timer timer = new Timer();
-    
+
+    /**
+     * Determines the BPM.
+     *
+     * @param BPM Determines the beats per minute.
+     */
     public MusicManager(int BPM) {
         this.rate = BPM;
     }
-    
-    public void play(String color, int speed) {
-        var type = "piano"; // TODO add other types
-        var note = COLOR_TO_NOTE.get(color);
-        
-        var sound = SOUNDS.get(type + '-' + note + '-' + getNoteType(speed));
-        
-        if (sound != null) {
-            var beatsPerSecond = rate / 60d;
-            var time = 1000;
-            var mod = 1D;
-            switch (speed) {
-                case 1:
-                    mod = beatsPerSecond;
-                    break;
-                case 2:
-                    mod = beatsPerSecond/2;
-                    break;
-                case 3:
-                    mod = beatsPerSecond/4;
-                    break;
-                case 4:
-                    mod = beatsPerSecond/8;
-                    break;
-                default:
-                    break;
-            }
-            sound.playRepeating((int) Math.round(time * mod));
+
+    /**
+     * This unsticks the note if it's stuck.
+     *
+     * @param note Note is the note that plays.
+     * @return true or false, depending on the stickiness of the mouse.
+     */
+    public boolean unstickIfStuck(String note) {
+        var sound = SOUNDS.get(note);
+        if (sound.isStuck()) {
+            sound.stop();
+            return true;
         }
+        return false;
     }
-    
+
+    /**
+     *
+     * @param note The note that is being played.
+     * @param speed The duration of the note.
+     * @param stick If it's still playing after the mouse is removed.
+     * @return Returns the sound (if there is one)
+     */
+    public Sound play(String note, int speed, boolean stick) {
+        var sound = SOUNDS.get(note);
+
+        if (sound == null) {
+            return null;
+        }
+        var beatsPerSecond = rate / 60d;
+        var time = 1000;
+        var mod = 1D;
+        switch (speed) {
+            case 1:
+                mod = beatsPerSecond;
+                break;
+            case 2:
+                mod = beatsPerSecond / 2;
+                break;
+            case 3:
+                mod = beatsPerSecond / 4;
+                break;
+            case 4:
+                mod = beatsPerSecond / 8;
+                break;
+            default:
+                break;
+        }
+        playingSounds.add(sound);
+        sound.playRepeating((int) Math.round(time * mod), stick);
+        return sound;
+    }
+
+    /**
+     * Determines the duration of the note.
+     *
+     * @param speed Duration of the notes.
+     * @return The name of the duration.
+     */
     public static String getNoteType(int speed) {
-        
+
         switch (speed) {
             case 1:
                 return "whole";
@@ -60,7 +94,7 @@ public class MusicManager {
                 throw new UnsupportedOperationException("Unsupported note type " + speed);
         }
     }
-    
+
     public static Map<String, Sound> loadSounds() {
         return Map.of(
                 //                "piano-a-whole", new Sound("piano", "a", 1),
@@ -97,5 +131,16 @@ public class MusicManager {
         //                "piano-g-quarter", new Sound("piano", "g", 3),
         //                "piano-g-eighth", new Sound("piano", "g", 4)                
         );
+    }
+
+    public void stopNonStuck() {
+        var iterator = playingSounds.iterator();
+        while (iterator.hasNext()) {
+            Sound next = iterator.next();
+            if (!next.isStuck()) {
+                next.stop();
+                iterator.remove();
+            }
+        }
     }
 }

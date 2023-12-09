@@ -6,6 +6,11 @@ import java.awt.event.ComponentListener;
 
 public class SquareResizerListener implements ComponentListener {
 
+    /**
+     * When the frame is resized, this method is called.
+     *
+     * @param e Is the event that happens, making the frame resize.
+     */
     @Override
     public void componentResized(ComponentEvent e) {
         Rectangle b = e.getComponent().getBounds();
@@ -14,13 +19,16 @@ public class SquareResizerListener implements ComponentListener {
 
     @Override
     public void componentMoved(ComponentEvent e) {
+        //unused
     }
 
     @Override
     public void componentShown(ComponentEvent e) {
+        //uinsused
     }
 
     @Override
     public void componentHidden(ComponentEvent e) {
+        //unsused
     }
 }

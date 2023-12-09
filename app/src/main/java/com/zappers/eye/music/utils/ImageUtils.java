@@ -18,6 +18,14 @@ public final class ImageUtils {
             "PINK", "B"
     );
 
+    /**
+     * Resizes the image.
+     *
+     * @param image The image.
+     * @param width The width of the image.
+     * @param height The height of the image.
+     * @return Returns the buffered image.
+     */
     public static BufferedImage resize(BufferedImage image, int width, int height) {
         BufferedImage bi = new BufferedImage(width, height, BufferedImage.TRANSLUCENT);
         Graphics2D g2d = (Graphics2D) bi.createGraphics();
@@ -27,6 +35,14 @@ public final class ImageUtils {
         return bi;
     }
 
+    /**
+     * This figured out what colour matches with the quadrants.
+     *
+     * @param left The left quadrs.
+     * @param top The top quadrs.
+     * @param degrees The degrees away from the graph lines.
+     * @return Returns the colour.
+     */
     public static String getColorByDegrees(boolean left, boolean top, double degrees) {
         double modDegrees = degrees;
 

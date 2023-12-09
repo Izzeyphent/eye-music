@@ -31,6 +31,14 @@ public class App {
         frame.addComponentListener(new SquareResizerListener());
     }
 
+    /**
+     * this method is to create the music buttons. It first creates an (invisible) panel and then uses an image, putting that over the panel then it
+     * creates a button out of the image. the button is visible. it also attaches a mouse listener so that it can sense where the mouse is at the
+     * screen.
+     *
+     * @return it returns the panel we just defined.
+     * @throws IOException when the button image is NOT loaded; when it fails to do so.
+     */
     public static JPanel buildMainMusicButtons() throws IOException {
         JPanel panel = new JPanel(); // the panel is not visible in output
         ImageIcon icon = new ImageIcon(ImageUtils.resize(ImageIO.read(BUTTON_IMAGE.openStream()), 1000, 1000));
@@ -39,7 +47,9 @@ public class App {
 
         button.setVisible(true);
 
-        button.addMouseMotionListener(new MouseActionMovementListener(button));
+        var mouseListener = new MouseActionMovementListener(button);
+        button.addMouseListener(mouseListener);
+        button.addMouseMotionListener(mouseListener);
         panel.setBackground(Color.GRAY);
         panel.add(button); // Components Added using Flow Layout
         panel.addComponentListener(new IconComponentResizeListener(button, ImageIO.read(BUTTON_IMAGE.openStream())));

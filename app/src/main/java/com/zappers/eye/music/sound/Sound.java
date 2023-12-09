@@ -16,7 +16,15 @@ public class Sound {
 
     private final Clip sound;
     private Timer timer;
+    private boolean stick = false;
 
+    /**
+     * Gets the file, then tries to play the sound.
+     *
+     * @param type Type is the type of sound.
+     * @param note The note is the note it plays.
+     * @param length An int value for the amount of time it plays.
+     */
     public Sound(String type, String note, int length) {
         try {
             URL resource = Sound.class.getResource(getFileName(type, note, length));
@@ -30,22 +38,15 @@ public class Sound {
     }
 
     public void play() {
-        try {
-            if (this.sound.isOpen()) {
-                if (this.sound.isRunning()) {
-                    this.sound.stop();
-                    this.sound.flush();
-                    this.sound.setFramePosition(0);
-                }
-                this.sound.open();
-            }
-        } catch (LineUnavailableException ex) {
-            System.out.println("Ahh, failed to play" + ex.getMessage());
+        if (this.sound.isRunning()) {
+            this.sound.stop();
         }
+        this.sound.setFramePosition(0);
+        this.sound.start();
     }
 
-    public void playRepeating(int time) {
-
+    public void playRepeating(int time, boolean stick) {
+        this.stick = stick;
         if (timer != null) {
             timer.cancel();
         }
@@ -55,12 +56,33 @@ public class Sound {
             public void run() {
                 play();
             }
-
         };
 
         timer.scheduleAtFixedRate(task, 0, time);
     }
 
+    public void stop() {
+        this.stick = false;
+        if (this.sound.isRunning()) {
+            this.sound.stop();
+        }
+        if (timer != null) {
+            timer.cancel();
+        }
+        this.timer = null;
+    }
+
+    public boolean isStuck() {
+        return this.stick;
+    }
+
+    /**
+     *
+     * @param type Type is the type of sound.
+     * @param note The note is the note it plays.
+     * @param length An int value for the amount of time it plays.
+     * @return Returns the note: type, note, and length .wav.
+     */
     public static String getFileName(String type, String note, int length) {
         return new StringBuilder()
                 .append('/')
