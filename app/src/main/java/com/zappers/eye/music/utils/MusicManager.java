@@ -150,4 +150,13 @@ public class MusicManager {
             }
         }
     }
+
+    public void stopAll() {
+        var iterator = playingSounds.iterator();
+        while (iterator.hasNext()) {
+            Sound next = iterator.next();
+            next.stop();
+            iterator.remove();
+        }
+    }
 }

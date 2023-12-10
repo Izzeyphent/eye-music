@@ -1,5 +1,6 @@
 package com.zappers.eye.music;
 
+import static com.zappers.eye.music.Configs.BPM;
 import com.zappers.eye.music.actions.IconComponentResizeListener;
 import com.zappers.eye.music.actions.MouseActionMovementListener;
 import com.zappers.eye.music.actions.SquareResizerListener;
@@ -13,9 +14,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import com.zappers.eye.music.utils.ImageUtils;
+import com.zappers.eye.music.utils.MusicManager;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class App {
 
+    public static final MusicManager MUSIC_MANAGER = new MusicManager(BPM);
     private static final URL BUTTON_IMAGE = App.class.getClassLoader().getResource("music-buttons.png");
 
     public static void main(String[] args) throws IOException {
@@ -26,6 +31,24 @@ public class App {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.addComponentListener(new SquareResizerListener());
+        frame.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if (e.getKeyChar() == 27) {
+                    MUSIC_MANAGER.stopAll();
+                }
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
     }
 
     /**

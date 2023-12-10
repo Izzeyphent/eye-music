@@ -1,5 +1,6 @@
 package com.zappers.eye.music.actions;
 
+import static com.zappers.eye.music.App.MUSIC_MANAGER;
 import static com.zappers.eye.music.Configs.BPM;
 import com.zappers.eye.music.utils.ImageUtils;
 import static com.zappers.eye.music.utils.ImageUtils.COLOR_TO_NOTE;
@@ -12,7 +13,6 @@ import static com.zappers.eye.music.utils.MusicManager.getNoteType;
 public class MouseActionMovementListener extends MouseAdapter {
 
     private static final double DIAMETER_PERCENTAGE = 1000d / 1142d;
-    private static final MusicManager MUSIC_MANAGER = new MusicManager(BPM);
     private final JLabel button;
     private String currentMousePosition = "";
     private int radius = 500;
@@ -67,23 +67,9 @@ public class MouseActionMovementListener extends MouseAdapter {
         this.posX = e.getX();
         this.posY = e.getY();
         updateRadius(); //shouldn't be nessesary, but it is :/
-
-        //  determines the quadrant the mouse is placed in.
-        boolean left = this.posX <= centerX;
-        boolean top = this.posY <= centerY; //if grid is on the circle, then the y is positive for top and vice versa. same for x.
-
-        // this determines the degrees that the mouse has away from the lines of the grid.
-        double degrees = getAngleInDegrees(this.posX, this.posY, centerX, centerY);
-
-        // gets colour from img based on quadr. and the degrees from the line. each triangle is 45 degrees
-        String color = ImageUtils.getColorByDegrees(left, top, degrees);
         double distance = Math.sqrt(Math.pow(centerX - posX, 2) + Math.pow(centerY - posY, 2));
-
-        // This bit determines which note the mouse is hovering over.
         boolean isInCircle = distance <= radius;
-        var type = "piano"; // TODO add other types
-        var note = COLOR_TO_NOTE.get(color);
-        var speed = (int) Math.abs(Math.floor(distance / (radius / 4D)) - 4);
+        int speed = (int) Math.abs(Math.floor(distance / (radius / 4D)) - 4);
 
         // if it's in the 4th section, it's a whole note so the speed is 1 
         /**
@@ -91,7 +77,7 @@ public class MouseActionMovementListener extends MouseAdapter {
          * mouse is removed from the button.
          */
         if (isInCircle) {
-            String sound = type + '-' + note + '-' + getNoteType(speed);
+            String sound = getSoundOffMousePos(distance);
             if (!currentMousePosition.equals(sound)) {
                 MUSIC_MANAGER.stopNonStuck();
                 MUSIC_MANAGER.play(sound, speed, false);
@@ -111,15 +97,32 @@ public class MouseActionMovementListener extends MouseAdapter {
      */
     @Override
     public void mouseClicked(MouseEvent e) {
+        this.posX = e.getX();
+        this.posY = e.getY();
         double distance = Math.sqrt(Math.pow(centerX - posX, 2) + Math.pow(centerY - posY, 2));
         boolean isInCircle = distance <= radius;
+        int speed = (int) Math.abs(Math.floor(distance / (radius / 4D)) - 4);
+
         if (!isInCircle) {
             return;
         }
-        var speed = (int) Math.abs(Math.floor(distance / (radius / 4D)) - 4);
-        if (!MUSIC_MANAGER.unstickIfStuck(currentMousePosition)) {
-            MUSIC_MANAGER.play(currentMousePosition, speed, true);
+
+        String sound = getSoundOffMousePos(distance);
+        if (!MUSIC_MANAGER.unstickIfStuck(sound)) {
+            MUSIC_MANAGER.play(sound, speed, true);
         }
+    }
+
+    public String getSoundOffMousePos(double distance) {
+        var speed = (int) Math.abs(Math.floor(distance / (radius / 4D)) - 4);
+        var type = "piano"; // TODO add other types
+        boolean left = this.posX <= centerX;
+        boolean top = this.posY <= centerY; //if grid is on the circle, then the y is positive for top and vice versa. same for x.
+        double degrees = getAngleInDegrees(this.posX, this.posY, centerX, centerY);
+        String color = ImageUtils.getColorByDegrees(left, top, degrees);
+        var note = COLOR_TO_NOTE.get(color);
+        String sound = type + '-' + note + '-' + getNoteType(speed);
+        return sound;
     }
 
     public void updateRadius() {
